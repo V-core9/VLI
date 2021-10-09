@@ -11,16 +11,19 @@ const mainDefinitions = [
 ]
 const mainOptions = commandLineArgs(mainDefinitions, { stopAtFirstUnknown: true })
 
-console.log('COMMAND\n===========')
-console.log(mainOptions.command)
+//console.log('COMMAND\n===========')
+//console.log(mainOptions.command)
 
 
-
-
-
-
-const commandList = {
+const V_Commander = {
   _commands: [
+    {
+      name: "_app",
+      disabled: false,
+      exec() {
+        return vLog.warn("CMD : [ RUN ]  >> STARTING V_CLI APP");
+      }
+    },
     {
       name: "hello",
       disabled: false,
@@ -83,6 +86,7 @@ const commandList = {
       }
     }
   ],
+
   findByName(name = null) {
     var res = false;
     if (name === null) return false;
@@ -98,7 +102,7 @@ const commandList = {
 };
 
 var commandToExec = false;
-commandToExec = commandList.findByName(mainOptions.command);
+commandToExec = V_Commander.findByName(mainOptions.command);
 
 
 
@@ -108,6 +112,6 @@ if (commandToExec !== false) {
   commandToExec();
 } else {
   vLog.warn("v did not receive any data... <commandToExec> has not been provided. [ Response :|: Command_Trigger -> <help> ]");
-  commandList.findByName("HELP")();
+  V_Commander.findByName("HELP")();
 }
 
