@@ -1,63 +1,87 @@
 #!/usr/bin/env node
 
-const textNullVal = "_!.NULL.!_";
-const args = require('args-parser')(process.argv);
-const vLog = require('../src/index.js');
-
-
-const optionDefinitions = [
-  { name: 'verbose', alias: 'v', type: Boolean },
-  { name: 'src', type: String, multiple: true, defaultOption: true },
-  { name: 'timeout', alias: 't', type: Number }
-]
 
 const commandLineArgs = require('command-line-args')
-const options = commandLineArgs(optionDefinitions)
+
+/* first - parse the main command */
+const mainDefinitions = [
+  { name: 'command', defaultOption: true }
+]
+const mainOptions = commandLineArgs(mainDefinitions, { stopAtFirstUnknown: true })
+const argv = mainOptions._unknown || []
+
+console.log('COMMAND\n===========')
+console.log(mainOptions.command)
 
 
-vLog.info(JSON.stringify(options, false, 4));
-console.log(args);
+
+
+
+const textNullVal = "_!.NULL.!_";
+
+const vLog = require('../src/index.js');
+
 
 const commandList = {
   _commands: [
     {
       name: "hello",
+      disabled: false,
       exec() {
         return vLog.warn("CMD : [ hello ]  >> YEAAAAAA HELLOOO");
       }
     },
     {
       name: "help",
+      disabled: false,
       exec() {
-        return vLog.log("CMD : [ help ]  >> HELP ME PLEASE");
+        return vLog.log("CMD : [ help ]  >> HELP ME PLEASE ::: NOOOOOOOOOOOO!!!!!!!!!");
       }
     },
     {
       name: "msg",
+      disabled: false,
       exec() {
         return vLog.info("CMD : [ msg ]  >> Accept MSG ");
       }
     },
     {
       name: "bash",
+      disabled: false,
       exec() {
         return vLog.info("CMD : [ bash ]  >> DO SOMETHING IN BASH");
       }
     },
     {
       name: "something_quite_bad",
+      disabled: false,
       exec() {
         return vLog.error("CMD : [ something_quite_bad ]  >> DO SOMETHING SUUUPER BAD TO TRIGGER ");
       }
     },
     {
-      name: "selftest",
+      name: "health_test",
+      disabled: false,
       exec() {
-        if (args.selftest !== false) {
-          for (let i = 0; i < args.selftest; i++) {
-            vLog.msg(vLog.generate.randomMessage(), vLog.generate.randomType());
-          }
+        console.log(mainOptions.repeatNumber);
+
+        const mergeDefinitions = [
+          { name: 'message', alias: 'm', type: String, multiple: true },
+          { name: 'help', alias: "h", type: Boolean },
+          { name: 'verbose', alias: 'v', type: Boolean },                                   // printing output to console ---
+          { name: 'repeatNumber', alias: 'r', type: Number },                                   // health_test option -> generate few  <> accept number of generates to do
+          { name: 'save_log', alias: 's', type: Boolean },                                       // output option -> to file <> to folder ...
+        ]
+        const mergeOptions = commandLineArgs(mergeDefinitions, { argv })
+
+
+        for (let i = 0; i < mergeOptions.repeatNumber; i++) {
+          vLog.msg(vLog.generate.randomMessage(), vLog.generate.randomType());
         }
+
+        console.log('\nmergeOptions\n============')
+        console.log(mergeOptions)
+
       }
     }
   ],
@@ -74,24 +98,18 @@ const commandList = {
     return res;
   },
 };
-var commandToExec = null;
+
+var commandToExec = false;
+commandToExec = commandList.findByName(mainOptions.command);
 
 
-Object.keys(args).forEach(argEntry => {
-  commandToExec = commandList.findByName(argEntry);
-});
 
-if (commandToExec !== null) {
+
+if (commandToExec !== false) {
+  //console.log(commandToExec);
   commandToExec();
 } else {
   vLog.warn("v did not receive any data... <commandToExec> has not been provided. [ Response :|: Command_Trigger -> <help> ]");
   commandList.findByName("HELP")();
 }
 
-var message = (typeof args.msg === "undefined") ? textNullVal : (`${args.msg}`);
-var type = (typeof args.type === "undefined") ? ((message !== textNullVal) ? "info" : "warn") : (`${args.type}`);
-var selftest = (typeof args.selftest !== "undefined") ? ((isNaN(args.selftest) || typeof args.selftest === "boolean") ? selftest = 10 : selftest = args.selftest) : false;
-
-
-
-vLog.msg(message, type);
