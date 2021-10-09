@@ -1,6 +1,8 @@
 #!/usr/bin/env node
 
 
+
+const vLog = require('../src/index.js');
 const commandLineArgs = require('command-line-args')
 
 /* first - parse the main command */
@@ -8,7 +10,6 @@ const mainDefinitions = [
   { name: 'command', defaultOption: true }
 ]
 const mainOptions = commandLineArgs(mainDefinitions, { stopAtFirstUnknown: true })
-const argv = mainOptions._unknown || []
 
 console.log('COMMAND\n===========')
 console.log(mainOptions.command)
@@ -16,10 +17,6 @@ console.log(mainOptions.command)
 
 
 
-
-const textNullVal = "_!.NULL.!_";
-
-const vLog = require('../src/index.js');
 
 
 const commandList = {
@@ -63,6 +60,7 @@ const commandList = {
       name: "health_test",
       disabled: false,
       exec() {
+        const argv = mainOptions._unknown || []
         console.log(mainOptions.repeatNumber);
 
         const mergeDefinitions = [
