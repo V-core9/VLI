@@ -4,6 +4,20 @@ const textNullVal = "_!.NULL.!_";
 const args = require('args-parser')(process.argv);
 const vLog = require('../src/index.js');
 
+
+const optionDefinitions = [
+  { name: 'verbose', alias: 'v', type: Boolean },
+  { name: 'src', type: String, multiple: true, defaultOption: true },
+  { name: 'timeout', alias: 't', type: Number }
+]
+
+const commandLineArgs = require('command-line-args')
+const options = commandLineArgs(optionDefinitions)
+
+
+vLog.info(JSON.stringify(options, false, 4));
+console.log(args);
+
 const commandList = {
   _commands: [
     {
@@ -36,13 +50,23 @@ const commandList = {
         return vLog.error("CMD : [ something_quite_bad ]  >> DO SOMETHING SUUUPER BAD TO TRIGGER ");
       }
     },
+    {
+      name: "selftest",
+      exec() {
+        if (args.selftest !== false) {
+          for (let i = 0; i < args.selftest; i++) {
+            vLog.msg(vLog.generate.randomMessage(), vLog.generate.randomType());
+          }
+        }
+      }
+    }
   ],
   findByName(name = null) {
     var res = false;
     if (name === null) return false;
     this._commands.forEach(cmd => {
-      if (cmd.name === name) {
-        //vLog.info("FOUND COMMAND");
+      if (cmd.name.toLowerCase() === name.toLowerCase()) {
+        vLog.info("FOUND COMMAND [ " + cmd.name + " ] ");
         res = cmd.exec;
       };
     });
@@ -57,19 +81,17 @@ Object.keys(args).forEach(argEntry => {
   commandToExec = commandList.findByName(argEntry);
 });
 
-if (commandToExec !== false) {
+if (commandToExec !== null) {
   commandToExec();
+} else {
+  vLog.warn("v did not receive any data... <commandToExec> has not been provided. [ Response :|: Command_Trigger -> <help> ]");
+  commandList.findByName("HELP")();
 }
 
 var message = (typeof args.msg === "undefined") ? textNullVal : (`${args.msg}`);
 var type = (typeof args.type === "undefined") ? ((message !== textNullVal) ? "info" : "warn") : (`${args.type}`);
 var selftest = (typeof args.selftest !== "undefined") ? ((isNaN(args.selftest) || typeof args.selftest === "boolean") ? selftest = 10 : selftest = args.selftest) : false;
 
-if (args.selftest !== false) {
-  for (let i = 0; i < args.selftest; i++) {
-    vLog.msg(vLog.generate.randomMessage(), vLog.generate.randomType());
-  }
-} else {
 
-  vLog.msg(message, type);
-}
+
+vLog.msg(message, type);
