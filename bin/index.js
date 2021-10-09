@@ -1,4 +1,4 @@
-#!/usr/bin / env node
+#!/usr/bin/env node
 
 
 console.time("vLog_EXEC_TIME_ALL")

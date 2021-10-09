@@ -4,7 +4,7 @@
   "description": "Custom CLI tool",
   "main": "./lib/index.js",
   "bin": {
-    "v": "bin/index.js"
+    "v": "./bin/index.js"
   },
   "directories": {
     "lib": "lib",
@@ -19,7 +19,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/V-core9/VLI/issues"
   },
