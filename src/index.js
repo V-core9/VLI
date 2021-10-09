@@ -33,10 +33,11 @@ const systemMessages = {
 // |>- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // [ 2 ]>  logSysMsg(sysMsg.cliText)
 //------------------------------------------------------
-var blockLog = (config.save_log === false && config.mode === "production");
-const justReturn = () => {
-  return blockLog;
+
+function getRandomInt(max) {
+  return Math.floor(Math.random() * max);
 }
+
 /*
 const logStyle = {
   log: (msg = "") => {
@@ -62,7 +63,7 @@ const vLog = {
     return this.list.push(item);
   },
   msg(content = null, type = "log") {
-    if (justReturn()) return;
+    if (config.justReturn()) return;
 
     var exec = 0;
     if (profileExecTimes()) exec = performance.now();
@@ -138,6 +139,13 @@ const vLog = {
     }
 
     console.log(styledMessage);
+  },
+
+  generate: {
+    randomType() {
+      var randomNumber = getRandomInt(4) + 1;
+      return (randomNumber % 2 === 0) ? ((randomNumber % 4 === 0) ? "log" : "info") : ((randomNumber % 3 === 0) ? "warn" : "error")
+    }
   }
 }
 module.exports = vLog;

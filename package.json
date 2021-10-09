@@ -2,12 +2,12 @@
   "name": "v",
   "version": "1.2.1",
   "description": "Custom CLI tool",
-  "main": "./lib/index.js",
+  "main": "./src/index.js",
   "bin": {
     "v": "./bin/index.js"
   },
   "directories": {
-    "lib": "lib",
+    "lib": "src",
     "test": "test"
   },
   "scripts": {

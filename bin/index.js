@@ -1,9 +1,8 @@
 #!/usr/bin/env node
 
 
-console.time("vLog_EXEC_TIME_ALL")
+const vLog = require('../src/index.js');
 
-const vLog = require('../lib/index.js');
 const args = require('args-parser')(process.argv);
 
 var message = "";
@@ -25,7 +24,7 @@ if (typeof args.selftest !== "undefined") {
   It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.
 `;
   for (let i = 0; i < testNumber; i++) {
-    var type = (i % 2 === 0) ? ((i % 4 === 0) ? "log" : "info") : ((i % 5 === 0) ? "warn" : "error");
+    var type = vLog.generate.randomType();
     vLog.msg(message, type);
   }
   console.timeEnd("LOOP EXEC TIME")
